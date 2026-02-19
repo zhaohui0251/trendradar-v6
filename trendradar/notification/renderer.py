@@ -167,11 +167,46 @@ def render_dingtalk_content(
         rss_items: RSS 条目列表（可选，用于合并推送）
         show_new_section: 是否显示新增热点区域
 
+    """
     Returns:
         格式化的钉钉消息内容
     """
+
+    # =========================================================
+    # 优先使用 AI 精简推送（push_items）逻辑
+    # =========================================================
+    ai_data = report_data.get("ai_analysis") or report_data.get("analysis")
+
+    if isinstance(ai_data, dict) and ai_data.get("push_items"):
+        now = get_time_func() if get_time_func else datetime.now()
+        push_items = (ai_data.get("push_items") or [])[:30]  # 强制最多30条
+
+        text_content = "🧠 **AI精选热点（去重精简版）**\n\n"
+        text_content += f"📅 {now.strftime('%Y-%m-%d %H:%M:%S')}\n\n"
+        text_content += f"📌 共筛选 {len(push_items)} 条重点内容（已去重择优）\n\n"
+        text_content += "---\n\n"
+
+        for idx, item in enumerate(push_items, 1):
+            title = item.get("title", "")
+            url = item.get("url", "")
+            source = item.get("best_source", "")
+            summary = item.get("one_sentence_summary", "")
+
+            text_content += f"{idx}. **{title}**\n"
+            if source:
+                text_content += f"   来源：{source}\n"
+            if summary:
+                text_content += f"   摘要：{summary}\n"
+            if url:
+                text_content += f"   链接：{url}\n"
+            text_content += "\n"
+
+        text_content += f"> 更新时间：{now.strftime('%Y-%m-%d %H:%M:%S')}"
+        return text_content
+
     if region_order is None:
         region_order = DEFAULT_REGION_ORDER
+
 
     total_titles = sum(
         len(stat["titles"]) for stat in report_data["stats"] if stat["count"] > 0
