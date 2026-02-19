@@ -167,7 +167,6 @@ def render_dingtalk_content(
         rss_items: RSS 条目列表（可选，用于合并推送）
         show_new_section: 是否显示新增热点区域
 
-    """
     Returns:
         格式化的钉钉消息内容
     """
