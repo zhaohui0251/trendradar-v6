@@ -41,7 +41,7 @@ on:
 
 concurrency:
   group: crawler-${{ github.ref_name }}
-  cancel-in-progress: false
+  cancel-in-progress: true
 
 permissions:
   contents: read
