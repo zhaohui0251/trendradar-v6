@@ -9,7 +9,11 @@ name: Check In
 
 on:
   workflow_dispatch:
-
+push:
+  branches:
+    - master
+  paths:
+    - '.github/workflows/clean-crawler.yml'
 jobs:
   del_runs:
     runs-on: ubuntu-latest
